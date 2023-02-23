@@ -1,72 +1,49 @@
-<!--
-title: 'AWS NodeJS Example'
-description: 'This template demonstrates how to deploy a NodeJS function running on AWS Lambda using the traditional Serverless Framework.'
-layout: Doc
-framework: v3
-platform: AWS
-language: nodeJS
-priority: 1
-authorLink: 'https://github.com/serverless'
-authorName: 'Serverless, inc.'
-authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4'
--->
-
-
-# Serverless Framework AWS NodeJS Example
-
-This template demonstrates how to deploy a NodeJS function running on AWS Lambda using the traditional Serverless Framework. The deployed function does not include any event definitions as well as any kind of persistence (database). For more advanced configurations check out the [examples repo](https://github.com/serverless/examples/) which includes integrations with SQS, DynamoDB or examples of functions that are triggered in `cron`-like manner. For details about configuration of specific `events`, please refer to our [documentation](https://www.serverless.com/framework/docs/providers/aws/events/).
+# AWS Lambda example using Serverless Framework
 
 ## Usage
 
-### Deployment
+### Install DynamoDB locally
+
+``` bash
+npm run dynamodb
+```
+
+### Run Serverless offline
+
+``` bash
+npm run start
+```
+
+## Deployment
 
 In order to deploy the example, you need to run the following command:
 
-```
-$ serverless deploy
-```
-
-After running deploy, you should see output similar to:
-
-```bash
-Deploying aws-node-project to stage dev (us-east-1)
-
-✔ Service deployed to stack aws-node-project-dev (112s)
-
-functions:
-  hello: aws-node-project-dev-hello (1.5 kB)
+``` bash
+npm run deploy
 ```
 
-### Invocation
+## Invocation
 
-After successful deployment, you can invoke the deployed function by using the following command:
+This example uses an API Gateway endpoint to invoke the function:
 
-```bash
-serverless invoke --function hello
+``` curl
+curl --request POST \
+  --url http://localhost:3000/dev/generateCertificate \
+  --header 'Content-Type: application/json' \
+  --data '{
+  "id": "f0676b43-8b44-4683-b3bd-fa190f764c1f",
+  "name": "john doe",
+  "grade": 10
+}'
 ```
 
-Which should result in response similar to the following:
+The response should be a JSON like this:
 
-```json
+``` json
 {
-    "statusCode": 200,
-    "body": "{\n  \"message\": \"Go Serverless v3.0! Your function executed successfully!\",\n  \"input\": {}\n}"
+  "message": "Certificate generated successfully",
+  "filename": "f0676b43-8b44-4683-b3bd-fa190f764c1f.pdf"
 }
 ```
 
-### Local development
-
-You can invoke your function locally by using the following command:
-
-```bash
-serverless invoke local --function hello
-```
-
-Which should result in response similar to the following:
-
-```
-{
-    "statusCode": 200,
-    "body": "{\n  \"message\": \"Go Serverless v3.0! Your function executed successfully!\",\n  \"input\": \"\"\n}"
-}
-```
+The outcome of the invocation is a PDF file in the S3 bucket.

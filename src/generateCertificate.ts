@@ -20,7 +20,7 @@ export const handler: APIGatewayProxyHandler = async (event: any) => {
     statusCode: 201,
     body: JSON.stringify({
       message: 'Certificate generated successfully',
-      url: `https://dev-certificate-ignite.s3.amazonaws.com/${id}.pdf`,
+      filename: `${id}.pdf`,
     }),
   };
 };
