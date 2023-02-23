@@ -1,0 +1,84 @@
+service: certificate-ignite
+frameworkVersion: '3'
+
+plugins:
+  - serverless-esbuild
+  - serverless-dynamodb-local
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: us-east-1
+  deploymentMethod: direct
+  apiGateway:
+    minimumCompressionSize: 1024
+    shouldStartNameWithService: true
+  environment:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    NODE_OPTIONS: --enable-source-maps --stack-trace-limit=1000
+  lambdaHashingVersion: 20201221
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:PutItem
+      Resource: '*'
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+      Resource: '*'
+
+functions:
+  generateCertificate:
+    handler: src/generateCertificate.handler
+    events:
+      - http:
+          path: /generateCertificate
+          method: post
+          cors: true
+
+resources:
+  Resources:
+    dbCertificateUsers:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: users_certificate
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 3
+          WriteCapacityUnits: 3
+
+package:
+  individually: false
+  include:
+    - ./templates/**
+
+custom:
+  esbuild:
+    bundle: true
+    minify: false
+    sourcemap: true
+    target: node14
+    exclude:
+      - aws-sdk
+    define:
+      require.resolve: undefined
+    platform: node
+    concurrency: 10
+    external:
+      - chrome-aws-lambda
+      - puppeteer-core
+  dynamodb:
+    stages:
+      - local
+      - dev
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true

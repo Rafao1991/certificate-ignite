@@ -1,0 +1,25 @@
+{
+  "name": "certificate-ignite",
+  "version": "1.0.0",
+  "description": "ts serverless app",
+  "scripts": {
+    "start": "serverless offline start",
+    "deploy": "serverless deploy --verbose",
+    "dynamodb": "serverless dynamodb install"
+  },
+  "author": "rafael sousa",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.110",
+    "@types/handlebars": "^4.1.0",
+    "puppeteer": "^10.1.0",
+    "serverless-dynamodb-local": "^0.2.40",
+    "serverless-esbuild": "^1.39.0",
+    "serverless-offline": "^12.0.4"
+  },
+  "dependencies": {
+    "chrome-aws-lambda": "^10.1.0",
+    "handlebars": "^4.7.7",
+    "puppeteer-core": "^10.1.0"
+  }
+}
